@@ -1,5 +1,6 @@
 package com.RuanPablo2.ForumAPI.model;
 
+import com.RuanPablo2.ForumAPI.dtos.UserRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,5 +35,10 @@ public class User implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    public User(UserRequestDTO dto) {
+        this.name = dto.getName();
+        this.email = dto.getEmail();
     }
 }

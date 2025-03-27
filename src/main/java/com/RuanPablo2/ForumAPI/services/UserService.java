@@ -1,5 +1,6 @@
 package com.RuanPablo2.ForumAPI.services;
 
+import com.RuanPablo2.ForumAPI.dtos.UserRequestDTO;
 import com.RuanPablo2.ForumAPI.dtos.UserResponseDTO;
 import com.RuanPablo2.ForumAPI.exception.ResourceNotFoundException;
 import com.RuanPablo2.ForumAPI.model.User;
@@ -26,4 +27,11 @@ public class UserService {
         User result = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found", "USR-404"));
         return new UserResponseDTO(result);
     }
+
+    public User save(UserRequestDTO dto){
+        User user = new User(dto);
+        return userRepository.save(user);
+    }
+
+
 }
