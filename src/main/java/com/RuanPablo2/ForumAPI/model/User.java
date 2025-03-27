@@ -41,4 +41,9 @@ public class User implements Serializable {
         this.name = dto.getName();
         this.email = dto.getEmail();
     }
+
+    public void updateUser(UserRequestDTO dto) {
+        this.name = dto.getName();
+        this.email = dto.getEmail();
+    }
 }

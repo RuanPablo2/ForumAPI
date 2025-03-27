@@ -33,5 +33,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public UserResponseDTO update(String id, UserRequestDTO dto){
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found", "USR-404"));
 
+        user.updateUser(dto);
+
+        user = userRepository.save(user);
+        return new UserResponseDTO(user);
+    }
+
+    public void delete(String id){
+        findById(id);
+        userRepository.deleteById(id);
+    }
 }
