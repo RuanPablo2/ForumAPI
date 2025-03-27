@@ -1,7 +1,7 @@
 package com.RuanPablo2.ForumAPI.services;
 
 import com.RuanPablo2.ForumAPI.dtos.UserRequestDTO;
-import com.RuanPablo2.ForumAPI.dtos.UserResponseDTO;
+import com.RuanPablo2.ForumAPI.dtos.response.UserResponseDTO;
 import com.RuanPablo2.ForumAPI.exception.ResourceNotFoundException;
 import com.RuanPablo2.ForumAPI.model.User;
 import com.RuanPablo2.ForumAPI.repositories.UserRepository;

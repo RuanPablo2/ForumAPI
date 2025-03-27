@@ -1,10 +1,9 @@
-package com.RuanPablo2.ForumAPI.dtos;
+package com.RuanPablo2.ForumAPI.dtos.response;
 
 
 import com.RuanPablo2.ForumAPI.model.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.io.Serializable;
 
