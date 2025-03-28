@@ -23,9 +23,9 @@ public class UserService {
         return list;
     }
 
-    public UserResponseDTO findById(String id){
+    public User findById(String id){
         User result = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found", "USR-404"));
-        return new UserResponseDTO(result);
+        return result;
     }
 
     public User save(UserRequestDTO dto){

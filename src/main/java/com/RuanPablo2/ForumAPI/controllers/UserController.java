@@ -2,6 +2,7 @@ package com.RuanPablo2.ForumAPI.controllers;
 
 import com.RuanPablo2.ForumAPI.dtos.UserRequestDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.UserResponseDTO;
+import com.RuanPablo2.ForumAPI.model.Post;
 import com.RuanPablo2.ForumAPI.model.User;
 import com.RuanPablo2.ForumAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> findById(@PathVariable String id){
-        UserResponseDTO user = userService.findById(id);
-        return ResponseEntity.ok(user);
+        User user = userService.findById(id);
+        return ResponseEntity.ok(new UserResponseDTO(user));
     }
 
     @PostMapping
@@ -49,5 +50,11 @@ public class UserController {
     public ResponseEntity<Void> deleteById(@PathVariable String id){
         userService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/posts")
+    public ResponseEntity<List<Post>> findPostsByUser(@PathVariable String id){
+        User user = userService.findById(id);
+        return ResponseEntity.ok(user.getPosts());
     }
 }

@@ -29,10 +29,10 @@ public class User implements Serializable {
     @DBRef(lazy = true)
     private List<Post> posts = new ArrayList<>();
 
-    public User(String email, String name, String id) {
-        this.email = email;
-        this.name = name;
+    public User( String id, String name, String email) {
         this.id = id;
+        this.name = name;
+        this.email = email;
     }
 
     @Override
