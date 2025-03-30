@@ -1,6 +1,6 @@
 package com.RuanPablo2.ForumAPI.model;
 
-import com.RuanPablo2.ForumAPI.dtos.UserRequestDTO;
+import com.RuanPablo2.ForumAPI.dtos.request.UserRequestDTO;
 import com.RuanPablo2.ForumAPI.model.enums.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

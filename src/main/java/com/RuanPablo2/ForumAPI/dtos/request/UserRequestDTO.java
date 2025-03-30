@@ -1,4 +1,4 @@
-package com.RuanPablo2.ForumAPI.dtos;
+package com.RuanPablo2.ForumAPI.dtos.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

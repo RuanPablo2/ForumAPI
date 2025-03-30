@@ -1,12 +1,15 @@
 package com.RuanPablo2.ForumAPI.services;
 
-import com.RuanPablo2.ForumAPI.dtos.UserRequestDTO;
+import com.RuanPablo2.ForumAPI.dtos.request.UserRequestDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.UserResponseDTO;
+import com.RuanPablo2.ForumAPI.exception.BusinessException;
 import com.RuanPablo2.ForumAPI.exception.ResourceNotFoundException;
 import com.RuanPablo2.ForumAPI.model.User;
 import com.RuanPablo2.ForumAPI.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +19,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<UserResponseDTO> findAll(){
         List<UserResponseDTO> list = userRepository.findAll().stream().map(x -> new UserResponseDTO(x)).collect(Collectors.toList());
@@ -28,8 +34,16 @@ public class UserService {
         return result;
     }
 
-    public User save(UserRequestDTO dto){
+    @Transactional
+    public User save(UserRequestDTO dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new BusinessException("Email already registered", "USR-001");
+        }
+
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+
         User user = new User(dto);
+
         return userRepository.save(user);
     }
 

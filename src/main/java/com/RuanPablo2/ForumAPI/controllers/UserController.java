@@ -1,6 +1,6 @@
 package com.RuanPablo2.ForumAPI.controllers;
 
-import com.RuanPablo2.ForumAPI.dtos.UserRequestDTO;
+import com.RuanPablo2.ForumAPI.dtos.request.UserRequestDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.UserResponseDTO;
 import com.RuanPablo2.ForumAPI.model.Post;
 import com.RuanPablo2.ForumAPI.model.User;
