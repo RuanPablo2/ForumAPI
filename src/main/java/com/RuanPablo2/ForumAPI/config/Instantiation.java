@@ -1,15 +1,22 @@
 package com.RuanPablo2.ForumAPI.config;
 
 import com.RuanPablo2.ForumAPI.dtos.response.AuthorResponseDTO;
+import com.RuanPablo2.ForumAPI.model.Comment;
 import com.RuanPablo2.ForumAPI.model.Post;
 import com.RuanPablo2.ForumAPI.model.User;
+import com.RuanPablo2.ForumAPI.model.enums.Role;
+import com.RuanPablo2.ForumAPI.repositories.CommentRepository;
 import com.RuanPablo2.ForumAPI.repositories.PostRepository;
 import com.RuanPablo2.ForumAPI.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.TimeZone;
 
@@ -22,24 +29,43 @@ public class Instantiation implements CommandLineRunner {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public void run(String... args) throws Exception {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(ZoneOffset.UTC);
+
         userRepository.deleteAll();
         postRepository.deleteAll();
+        commentRepository.deleteAll();
 
-        User maria = new User(null, "Maria Silva", "maria@email.com", "123", null);
-        User joao = new User(null, "Joao Santos", "joao@email.com", "123", null);
-        User jose = new User(null, "Jose Oliveira", "jose@email.com", "123", null);
+        User maria = new User(null, "Maria Silva", "maria@email.com", passwordEncoder.encode("123"), Role.ROLE_USER);
+        User joao = new User(null, "Joao Santos", "joao@email.com", passwordEncoder.encode("123"), Role.ROLE_USER);
+        User jose = new User(null, "Jose Oliveira", "jose@email.com", passwordEncoder.encode("123"), Role.ROLE_USER);
 
         userRepository.saveAll(Arrays.asList(maria, joao, jose));
 
         Post post1 = new Post(null, sdf.parse("21/03/2025"), "Partiu viagem", "Vou viajar para São Paulo. Abraços!", new AuthorResponseDTO(maria), 0);
         Post post2 = new Post(null, sdf.parse("23/03/2025"), "Bom dia", "Acordei feliz hoje!", new AuthorResponseDTO(maria), 0);
 
+        postRepository.saveAll(Arrays.asList(post1, post2));
+
+        Comment c1 = new Comment(null, "Boa viagem mano!", Instant.from(formatter.parse("21/03/2025")), new AuthorResponseDTO(joao), post1.getId());
+        Comment c2 = new Comment(null, "Aproveite", Instant.from(formatter.parse("22/03/2025")), new AuthorResponseDTO(jose), post1.getId());
+        Comment c3 = new Comment(null, "Tenha um ótimo dia!", Instant.from(formatter.parse("23/03/2025")), new AuthorResponseDTO(joao), post2.getId());
+
+        commentRepository.saveAll(Arrays.asList(c1, c2, c3));
+
+        post1.setTotalComments(2);
+        post2.setTotalComments(1);
 
         postRepository.saveAll(Arrays.asList(post1, post2));
 

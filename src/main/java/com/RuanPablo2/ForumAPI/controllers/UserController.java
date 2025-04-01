@@ -33,13 +33,6 @@ public class UserController {
         return ResponseEntity.ok(new UserResponseDTO(user));
     }
 
-    @PostMapping
-    public ResponseEntity<Void> save(@RequestBody UserRequestDTO dto){
-        User user = userService.save(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
-        return ResponseEntity.created(uri).build();
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable String id, @RequestBody UserRequestDTO dto){
         userService.update(id, dto);

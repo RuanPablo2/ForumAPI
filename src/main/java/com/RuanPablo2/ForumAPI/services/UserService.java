@@ -4,9 +4,12 @@ import com.RuanPablo2.ForumAPI.dtos.request.UserRequestDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.UserResponseDTO;
 import com.RuanPablo2.ForumAPI.exception.BusinessException;
 import com.RuanPablo2.ForumAPI.exception.ResourceNotFoundException;
+import com.RuanPablo2.ForumAPI.exception.UnauthorizedException;
 import com.RuanPablo2.ForumAPI.model.User;
 import com.RuanPablo2.ForumAPI.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +40,7 @@ public class UserService {
     @Transactional
     public User save(UserRequestDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new BusinessException("Email already registered", "USR-001");
+            throw new BusinessException("Email already registered", "USR-002");
         }
 
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -59,5 +62,17 @@ public class UserService {
     public void delete(String id){
         findById(id);
         userRepository.deleteById(id);
+    }
+
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UnauthorizedException("Unauthenticated user", "USR-001");
+        }
+
+        String email = authentication.getName();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found", "USR-404"));
     }
 }

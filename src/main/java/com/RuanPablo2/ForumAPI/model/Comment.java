@@ -5,23 +5,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "comments")
-public class Comment {
+public class Comment implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Id
     private String id;
     private String text;
-    private Date date;
-
-    @DBRef
+    private Instant date;
     private AuthorResponseDTO author;
-
     private String postId;
 }
