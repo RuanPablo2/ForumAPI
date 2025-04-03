@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -13,7 +14,9 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentResponseDTO {
+public class CommentResponseDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String text;
     private String date;
     private AuthorResponseDTO author;

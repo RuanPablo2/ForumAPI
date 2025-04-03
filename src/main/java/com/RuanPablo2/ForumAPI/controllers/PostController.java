@@ -1,7 +1,9 @@
 package com.RuanPablo2.ForumAPI.controllers;
 
 import com.RuanPablo2.ForumAPI.dtos.request.CommentRequestDTO;
+import com.RuanPablo2.ForumAPI.dtos.request.PostRequestDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.CommentResponseDTO;
+import com.RuanPablo2.ForumAPI.dtos.response.PostResponseDTO;
 import com.RuanPablo2.ForumAPI.model.Comment;
 import com.RuanPablo2.ForumAPI.model.Post;
 import com.RuanPablo2.ForumAPI.services.CommentService;
@@ -13,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/api/posts")
 public class PostController {
@@ -21,12 +25,36 @@ public class PostController {
     private PostService postService;
 
     @Autowired
-    CommentService commentService;
+    private CommentService commentService;
+
+    @PostMapping
+    public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostRequestDTO dto) {
+        PostResponseDTO post = postService.createPost(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(post);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Post> findById(@PathVariable String id){
         Post post = postService.findById(id);
         return ResponseEntity.ok(post);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<PostResponseDTO>> searchPosts(@RequestParam String query) {
+        List<PostResponseDTO> posts = postService.searchPosts(query);
+        return ResponseEntity.ok(posts);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody PostRequestDTO dto) {
+        PostResponseDTO post = postService.updatePost(id, dto);
+        return ResponseEntity.ok(post);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable String id) {
+        postService.deletePost(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/comments")

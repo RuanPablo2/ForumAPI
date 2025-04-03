@@ -1,14 +1,15 @@
 package com.RuanPablo2.ForumAPI.model;
 
 import com.RuanPablo2.ForumAPI.dtos.response.AuthorResponseDTO;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import java.time.Instant;
 import java.util.Objects;
 
 @Getter
@@ -21,8 +22,7 @@ public class Post implements Serializable {
 
     @Id
     public String id;
-    private Date date;
-    private String title;
+    private Instant date;
     private String body;
     private AuthorResponseDTO author;
     private int totalComments;
