@@ -2,18 +2,20 @@ package com.RuanPablo2.ForumAPI.services;
 
 import com.RuanPablo2.ForumAPI.dtos.request.PostRequestDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.AuthorResponseDTO;
+import com.RuanPablo2.ForumAPI.dtos.response.PageResponseDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.PostResponseDTO;
+import com.RuanPablo2.ForumAPI.exception.BusinessException;
 import com.RuanPablo2.ForumAPI.exception.ResourceNotFoundException;
 import com.RuanPablo2.ForumAPI.exception.UnauthorizedException;
 import com.RuanPablo2.ForumAPI.model.Post;
 import com.RuanPablo2.ForumAPI.model.User;
 import com.RuanPablo2.ForumAPI.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -24,10 +26,19 @@ public class PostService {
     @Autowired
     private UserService userService;
 
+    public Page<PostResponseDTO> getAllPosts(Pageable pageable) {
+        Page<Post> posts = postRepository.findAll(pageable);
+        return posts.map(PostResponseDTO::new);
+    }
+
     public PostResponseDTO createPost(PostRequestDTO dto) {
         User loggedUser = userService.getAuthenticatedUser();
 
-        Post post = new Post(null, Instant.now(), dto.getBody(), new AuthorResponseDTO(loggedUser), 0);
+        if (dto.getBody() == null || dto.getBody().trim().isEmpty()) {
+            throw new BusinessException("Post body cannot be empty or contain only spaces.", "PST-001");
+        }
+
+        Post post = new Post(null, Instant.now(), dto.getBody().trim(), new AuthorResponseDTO(loggedUser), 0);
         post = postRepository.save(post);
 
         return new PostResponseDTO(post);
@@ -38,9 +49,9 @@ public class PostService {
         return result;
     }
 
-    public List<PostResponseDTO> searchPosts(String query) {
-        List<Post> posts = postRepository.findByBodyContainingIgnoreCase(query);
-        return posts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
+    public Page<PostResponseDTO> searchPosts(String query, Pageable pageable) {
+        Page<Post> posts = postRepository.findByBodyContainingIgnoreCase(query, pageable);
+        return posts.map(PostResponseDTO::new);
     }
 
     public PostResponseDTO updatePost(String postId, PostRequestDTO dto) {
@@ -64,9 +75,10 @@ public class PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found", "PST-404"));
 
         if (!post.getAuthor().getId().equals(loggedUser.getId())) {
-            throw new UnauthorizedException("You do not have permission to delete this post.", "AUTH-002");
+            throw new UnauthorizedException("You do not have permission to delete this post.", "AUTH-003");
         }
 
         postRepository.delete(post);
     }
+
 }
