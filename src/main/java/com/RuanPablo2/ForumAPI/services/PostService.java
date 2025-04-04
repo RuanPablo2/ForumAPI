@@ -2,7 +2,6 @@ package com.RuanPablo2.ForumAPI.services;
 
 import com.RuanPablo2.ForumAPI.dtos.request.PostRequestDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.AuthorResponseDTO;
-import com.RuanPablo2.ForumAPI.dtos.response.PageResponseDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.PostResponseDTO;
 import com.RuanPablo2.ForumAPI.exception.BusinessException;
 import com.RuanPablo2.ForumAPI.exception.ResourceNotFoundException;
@@ -81,4 +80,10 @@ public class PostService {
         postRepository.delete(post);
     }
 
+    public Page<PostResponseDTO> getPostsByUser(String userId, Pageable pageable) {
+        userService.findById(userId);
+
+        Page<Post> page = postRepository.findByAuthorId(userId, pageable);
+        return page.map(PostResponseDTO::new);
+    }
 }

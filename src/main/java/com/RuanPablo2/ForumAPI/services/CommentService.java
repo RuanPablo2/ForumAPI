@@ -78,4 +78,11 @@ public class CommentService {
         post.setTotalComments(Math.max(0, post.getTotalComments() - 1));
         postRepository.save(post);
     }
+
+    public Page<CommentResponseDTO> getCommentsByUser(String userId, Pageable pageable) {
+        userService.findById(userId);
+
+        Page<Comment> page = commentRepository.findByAuthorId(userId, pageable);
+        return page.map(CommentResponseDTO::new);
+    }
 }

@@ -11,4 +11,5 @@ public interface PostRepository extends MongoRepository<Post, String> {
 
     Page<Post> findByBodyContainingIgnoreCase(String query, Pageable pageable);
     Page<Post> findAll(Pageable pageable);
+    Page<Post> findByAuthorId(String userId, Pageable pageable);
 }

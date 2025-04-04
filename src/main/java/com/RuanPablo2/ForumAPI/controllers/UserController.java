@@ -1,16 +1,19 @@
 package com.RuanPablo2.ForumAPI.controllers;
 
 import com.RuanPablo2.ForumAPI.dtos.request.UserRequestDTO;
-import com.RuanPablo2.ForumAPI.dtos.response.UserResponseDTO;
-import com.RuanPablo2.ForumAPI.model.Post;
+import com.RuanPablo2.ForumAPI.dtos.response.*;
 import com.RuanPablo2.ForumAPI.model.User;
+import com.RuanPablo2.ForumAPI.services.CommentService;
+import com.RuanPablo2.ForumAPI.services.PostService;
 import com.RuanPablo2.ForumAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -19,6 +22,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private CommentService commentService;
 
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> findAll(){
@@ -45,9 +54,15 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/posts")
-    public ResponseEntity<List<Post>> findPostsByUser(@PathVariable String id){
-        User user = userService.findById(id);
-        return ResponseEntity.ok(user.getPosts());
+    @GetMapping("/{userId}/posts")
+    public PageResponseDTO<PostResponseDTO> getPostsByUser(@PathVariable String userId, @PageableDefault(size = 5, sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PostResponseDTO> page = postService.getPostsByUser(userId, pageable);
+        return PageUtils.buildPageResponse(page);
+    }
+
+    @GetMapping("/{userId}/comments")
+    public PageResponseDTO<CommentResponseDTO> getCommentsByUser(@PathVariable String userId, @PageableDefault(size = 5, sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<CommentResponseDTO> page = commentService.getCommentsByUser(userId, pageable);
+        return PageUtils.buildPageResponse(page);
     }
 }
