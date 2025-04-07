@@ -3,6 +3,7 @@ package com.RuanPablo2.ForumAPI.services;
 import com.RuanPablo2.ForumAPI.dtos.request.UserRequestDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.UserResponseDTO;
 import com.RuanPablo2.ForumAPI.exception.BusinessException;
+import com.RuanPablo2.ForumAPI.exception.ForbiddenActionException;
 import com.RuanPablo2.ForumAPI.exception.ResourceNotFoundException;
 import com.RuanPablo2.ForumAPI.exception.UnauthorizedException;
 import com.RuanPablo2.ForumAPI.model.User;
@@ -26,10 +27,12 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public List<UserResponseDTO> findAll(){
-        List<UserResponseDTO> list = userRepository.findAll().stream().map(x -> new UserResponseDTO(x)).collect(Collectors.toList());
-
-        return list;
+    public List<UserResponseDTO> findAll() {
+        return userRepository.findAll()
+                .stream()
+                .filter(User::isActive)
+                .map(UserResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
     public User findById(String id){
@@ -50,18 +53,34 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public UserResponseDTO update(String id, UserRequestDTO dto){
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found", "USR-404"));
+    public UserResponseDTO update(String id, UserRequestDTO dto) {
+        User loggedUser = getAuthenticatedUser();
+
+        if (!loggedUser.getId().equals(id)) {
+            throw new ForbiddenActionException("You can only update your own account.", "USR-403");
+        }
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found", "USR-404"));
 
         user.updateUser(dto);
-
         user = userRepository.save(user);
+
         return new UserResponseDTO(user);
     }
 
-    public void delete(String id){
-        findById(id);
-        userRepository.deleteById(id);
+    public void delete(String id) {
+        User loggedUser = getAuthenticatedUser();
+
+        if (!loggedUser.getId().equals(id)) {
+            throw new ForbiddenActionException("You can only deactivate your own account.", "USR-403");
+        }
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found", "USR-404"));
+
+        user.setActive(false);
+        userRepository.save(user);
     }
 
     public User getAuthenticatedUser() {

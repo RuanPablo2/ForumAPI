@@ -28,6 +28,7 @@ public class User implements UserDetails, Serializable {
     private String email;
     private String password;
     private Role role;
+    private boolean active = true;
 
     @DBRef(lazy = true)
     private List<Post> posts = new ArrayList<>();

@@ -9,6 +9,7 @@ import com.RuanPablo2.ForumAPI.dtos.response.PostResponseDTO;
 import com.RuanPablo2.ForumAPI.model.Comment;
 import com.RuanPablo2.ForumAPI.model.Post;
 import com.RuanPablo2.ForumAPI.services.CommentService;
+import com.RuanPablo2.ForumAPI.services.PostLikeService;
 import com.RuanPablo2.ForumAPI.services.PostService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class PostController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private PostLikeService postLikeService;
 
     @GetMapping
     public PageResponseDTO<PostResponseDTO> getAllPosts(@PageableDefault(size = 3, sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -83,5 +87,22 @@ public class PostController {
     public ResponseEntity<Void> deleteComment(@PathVariable String postId, @PathVariable String commentId) {
         commentService.deleteComment(postId, commentId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<Void> likePost(@PathVariable String postId) {
+        postLikeService.likePost(postId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{postId}/like")
+    public ResponseEntity<Void> unlikePost(@PathVariable String postId) {
+        postLikeService.unlikePost(postId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{postId}/likes")
+    public ResponseEntity<Long> countLikes(@PathVariable String postId) {
+        return ResponseEntity.ok(postLikeService.countLikes(postId));
     }
 }

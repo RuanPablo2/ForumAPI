@@ -3,6 +3,7 @@ package com.RuanPablo2.ForumAPI.services;
 import com.RuanPablo2.ForumAPI.dtos.request.CommentRequestDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.AuthorResponseDTO;
 import com.RuanPablo2.ForumAPI.dtos.response.CommentResponseDTO;
+import com.RuanPablo2.ForumAPI.exception.ForbiddenActionException;
 import com.RuanPablo2.ForumAPI.exception.ResourceNotFoundException;
 import com.RuanPablo2.ForumAPI.model.Comment;
 import com.RuanPablo2.ForumAPI.model.Post;
@@ -71,7 +72,7 @@ public class CommentService {
 
         boolean hasPermission = isCommentOwner || isPostOwner || isAdmin;
         if (!hasPermission) {
-            throw new AccessDeniedException("You do not have permission to delete this comment.");
+            throw new ForbiddenActionException("You do not have permission to delete this comment.", "CMT-403");
         }
 
         commentRepository.delete(comment);
