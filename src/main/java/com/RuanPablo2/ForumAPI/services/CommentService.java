@@ -41,7 +41,7 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found", "PST-404"));
 
-        Comment comment = new Comment(null, dto.getText(), Instant.now(), new AuthorResponseDTO(loggedUser), postId);
+        Comment comment = new Comment(null, dto.getText(), Instant.now(), new AuthorResponseDTO(loggedUser), postId, true);
         comment = commentRepository.save(comment);
 
         post.setTotalComments(post.getTotalComments() + 1);
@@ -52,7 +52,7 @@ public class CommentService {
 
     public Page<Comment> getCommentsByPost(String postId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("date").descending());
-        return commentRepository.findByPostId(postId, pageable);
+        return commentRepository.findByPostIdAndActiveTrue(postId, pageable);
     }
 
     public void deleteComment(String postId, String commentId) {
@@ -83,7 +83,7 @@ public class CommentService {
     public Page<CommentResponseDTO> getCommentsByUser(String userId, Pageable pageable) {
         userService.findById(userId);
 
-        Page<Comment> page = commentRepository.findByAuthorId(userId, pageable);
+        Page<Comment> page = commentRepository.findByAuthorIdAndActiveTrue(userId, pageable);
         return page.map(CommentResponseDTO::new);
     }
 }

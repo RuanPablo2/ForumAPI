@@ -12,7 +12,6 @@ import java.time.Instant;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Document(collection = "comments")
 public class Comment implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -23,4 +22,14 @@ public class Comment implements Serializable {
     private Instant date;
     private AuthorResponseDTO author;
     private String postId;
+    private boolean active = true;
+
+    public Comment(String id, String text, Instant date, AuthorResponseDTO author, String postId, boolean active) {
+        this.id = id;
+        this.text = text;
+        this.date = date;
+        this.author = author;
+        this.postId = postId;
+        this.active = active;
+    }
 }

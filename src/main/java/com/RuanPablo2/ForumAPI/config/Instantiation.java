@@ -45,17 +45,18 @@ public class Instantiation implements CommandLineRunner {
         User maria = new User(null, "Maria Silva", "maria@email.com", passwordEncoder.encode("123"), Role.ROLE_USER);
         User joao = new User(null, "Joao Santos", "joao@email.com", passwordEncoder.encode("123"), Role.ROLE_USER);
         User jose = new User(null, "Jose Oliveira", "jose@email.com", passwordEncoder.encode("123"), Role.ROLE_USER);
+        User admin = new User(null, "Admin Silva", "admin@email.com", passwordEncoder.encode("123"), Role.ROLE_ADMIN);
 
-        userRepository.saveAll(Arrays.asList(maria, joao, jose));
+        userRepository.saveAll(Arrays.asList(maria, joao, jose, admin));
 
-        Post post1 = new Post(null, LocalDate.parse("21/03/2025", dtf).atStartOfDay(ZoneOffset.UTC).toInstant(), "Vou viajar para São Paulo. Abraços!", new AuthorResponseDTO(maria), 0);
-        Post post2 = new Post(null, LocalDate.parse("23/03/2025", dtf).atStartOfDay(ZoneOffset.UTC).toInstant(), "Acordei feliz hoje!", new AuthorResponseDTO(maria), 0);
+        Post post1 = new Post(null, LocalDate.parse("21/03/2025", dtf).atStartOfDay(ZoneOffset.UTC).toInstant(), "Vou viajar para São Paulo. Abraços!", new AuthorResponseDTO(maria), 0, true);
+        Post post2 = new Post(null, LocalDate.parse("23/03/2025", dtf).atStartOfDay(ZoneOffset.UTC).toInstant(), "Acordei feliz hoje!", new AuthorResponseDTO(maria), 0, true);
 
         postRepository.saveAll(Arrays.asList(post1, post2));
 
-        Comment c1 = new Comment(null, "Boa viagem mano!", LocalDate.parse("21/03/2025", dtf).atStartOfDay(ZoneOffset.UTC).toInstant(), new AuthorResponseDTO(joao), post1.getId());
-        Comment c2 = new Comment(null, "Aproveite", LocalDate.parse("22/03/2025", dtf).atStartOfDay(ZoneOffset.UTC).toInstant(), new AuthorResponseDTO(jose), post1.getId());
-        Comment c3 = new Comment(null, "Tenha um ótimo dia!", LocalDate.parse("23/03/2025", dtf).atStartOfDay(ZoneOffset.UTC).toInstant(), new AuthorResponseDTO(joao), post2.getId());
+        Comment c1 = new Comment(null, "Boa viagem mano!", LocalDate.parse("21/03/2025", dtf).atStartOfDay(ZoneOffset.UTC).toInstant(), new AuthorResponseDTO(joao), post1.getId(), true);
+        Comment c2 = new Comment(null, "Aproveite", LocalDate.parse("22/03/2025", dtf).atStartOfDay(ZoneOffset.UTC).toInstant(), new AuthorResponseDTO(jose), post1.getId(), true);
+        Comment c3 = new Comment(null, "Tenha um ótimo dia!", LocalDate.parse("23/03/2025", dtf).atStartOfDay(ZoneOffset.UTC).toInstant(), new AuthorResponseDTO(joao), post2.getId(), true);
 
         commentRepository.saveAll(Arrays.asList(c1, c2, c3));
 

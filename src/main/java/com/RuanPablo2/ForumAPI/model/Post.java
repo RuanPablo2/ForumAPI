@@ -15,7 +15,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Document(collection = "posts")
 public class Post implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -26,6 +25,16 @@ public class Post implements Serializable {
     private String body;
     private AuthorResponseDTO author;
     private int totalComments;
+    private boolean active = true;
+
+    public Post(String id, Instant date, String body, AuthorResponseDTO author, int totalComments, boolean active) {
+        this.id = id;
+        this.date = date;
+        this.body = body;
+        this.author = author;
+        this.totalComments = totalComments;
+        this.active = active;
+    }
 
     @Override
     public boolean equals(Object o) {

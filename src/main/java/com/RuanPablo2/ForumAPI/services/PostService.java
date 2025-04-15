@@ -26,7 +26,7 @@ public class PostService {
     private UserService userService;
 
     public Page<PostResponseDTO> getAllPosts(Pageable pageable) {
-        Page<Post> posts = postRepository.findAll(pageable);
+        Page<Post> posts = postRepository.findByActiveTrue(pageable);
         return posts.map(PostResponseDTO::new);
     }
 
@@ -37,7 +37,7 @@ public class PostService {
             throw new BusinessException("Post body cannot be empty or contain only spaces.", "PST-001");
         }
 
-        Post post = new Post(null, Instant.now(), dto.getBody().trim(), new AuthorResponseDTO(loggedUser), 0);
+        Post post = new Post(null, Instant.now(), dto.getBody().trim(), new AuthorResponseDTO(loggedUser), 0, true);
         post = postRepository.save(post);
 
         return new PostResponseDTO(post);
@@ -49,7 +49,7 @@ public class PostService {
     }
 
     public Page<PostResponseDTO> searchPosts(String query, Pageable pageable) {
-        Page<Post> posts = postRepository.findByBodyContainingIgnoreCase(query, pageable);
+        Page<Post> posts = postRepository.findByBodyContainingIgnoreCaseAndActiveTrue(query, pageable);
         return posts.map(PostResponseDTO::new);
     }
 
@@ -83,7 +83,7 @@ public class PostService {
     public Page<PostResponseDTO> getPostsByUser(String userId, Pageable pageable) {
         userService.findById(userId);
 
-        Page<Post> page = postRepository.findByAuthorId(userId, pageable);
+        Page<Post> page = postRepository.findByAuthorIdAndActiveTrue(userId, pageable);
         return page.map(PostResponseDTO::new);
     }
 }
